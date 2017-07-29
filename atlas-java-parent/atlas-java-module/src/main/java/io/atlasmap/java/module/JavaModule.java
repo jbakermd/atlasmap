@@ -68,7 +68,11 @@ public class JavaModule extends BaseAtlasModule {
     public static final String DEFAULT_LIST_CLASS = "java.util.ArrayList";
     
     private ClassInspectionService javaInspectionService = null;
-    private JavaConstructService javaConstructService = null;        
+    private JavaConstructService javaConstructService = null;     
+    
+    public JavaModule() {
+        this.automaticallyProcessOutputFieldActions = false;
+    }
     
     @Override
     public void init() {
