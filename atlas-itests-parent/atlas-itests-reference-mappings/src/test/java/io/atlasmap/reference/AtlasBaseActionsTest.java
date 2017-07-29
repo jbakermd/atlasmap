@@ -109,10 +109,10 @@ public abstract class AtlasBaseActionsTest extends AtlasMappingBaseTest {
     } 
         
     public Object runActionTest(Action action, String inputFirstName, Object outputExpected) throws Exception {
-        return this.runActionTest(Arrays.asList(action), inputFirstName, outputExpected);
+        return this.runActionTestList(Arrays.asList(action), inputFirstName, outputExpected);
     }
     
-    public Object runActionTest(List<Action> actions, String inputFirstName, Object outputExpected) throws Exception { 
+    public Object runActionTestList(List<Action> actions, String inputFirstName, Object outputExpected) throws Exception { 
         System.out.println("Now running test for actions: " + actions);
         System.out.println("Input: " + inputFirstName);
         System.out.println("Expected output: " + outputExpected);
@@ -121,8 +121,10 @@ public abstract class AtlasBaseActionsTest extends AtlasMappingBaseTest {
         m.setMappingType(MappingType.MAP);
         m.getInputField().add(this.inputField);
         m.getOutputField().add(this.outputField);
-        m.getOutputField().get(0).setActions(new Actions());
-        m.getOutputField().get(0).getActions().getActions().addAll(actions);        
+        if (actions != null) {
+            m.getOutputField().get(0).setActions(new Actions());
+            m.getOutputField().get(0).getActions().getActions().addAll(actions);
+        }
         
         DataSource src = new DataSource();
         src.setDataSourceType(DataSourceType.SOURCE);

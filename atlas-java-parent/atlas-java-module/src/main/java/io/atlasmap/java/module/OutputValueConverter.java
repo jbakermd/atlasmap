@@ -111,7 +111,7 @@ public class OutputValueConverter implements JavaFieldWriterValueConverter {
                 // if last action was Lowercase the outputvalue would be a String
                 // if last action was StringLength the outputvalue would be an Integer
                 // the problem here is that the input type here needs to be the output type of the last field action ..?
-                outputValue = conversionService.convertType(outputValue, inputType, outputType);
+                //outputValue = conversionService.convertType(outputValue, inputType, outputType);
             } catch (AtlasConversionException e) {
                 logger.error(String.format("Unable to auto-convert for sT=%s tT=%s tF=%s msg=%s", inputType, outputType,
                         outputField.getPath(), e.getMessage()), e);

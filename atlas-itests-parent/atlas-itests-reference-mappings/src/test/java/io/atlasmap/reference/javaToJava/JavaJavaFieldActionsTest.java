@@ -1,5 +1,7 @@
 package io.atlasmap.reference.javaToJava;
 
+import org.junit.Test;
+
 import io.atlasmap.java.test.TargetFlatPrimitiveClass;
 import io.atlasmap.java.v2.JavaField;
 import io.atlasmap.reference.AtlasBaseActionsTest;
@@ -26,6 +28,13 @@ public class JavaJavaFieldActionsTest extends AtlasBaseActionsTest {
     public void runStringLengthTest() throws Exception {
         this.outputField = createField("/boxedIntField");
         this.runActionTest(new StringLength(), "fname", new Integer(5));
+        this.outputField = createField("/boxedStringField");
+    }
+    
+    @Test
+    public void runNoConversionTest() throws Exception {
+        this.outputField = createField("/boxedIntField");
+        this.runActionTestList(null, "fname", null);
         this.outputField = createField("/boxedStringField");
     }
     
