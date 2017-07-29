@@ -101,17 +101,11 @@ public class OutputValueConverter implements JavaFieldWriterValueConverter {
             outputValue = fieldActionService.processActions(outputField.getActions(), inputValue);
         } else {
             try {
-                //inputValue: "fname" (String)
-                //inputType: STRING
-                //outputType: INTEGER
-                //StringLength field action runs, changing "fname" (String) to "5" (Integer)
                 outputValue = fieldActionService.processActions(outputField.getActions(), inputValue);
-                //outputValue is now "5" (Integer)
-                //but conversion is about to fail because the input type here is STRING
-                // if last action was Lowercase the outputvalue would be a String
-                // if last action was StringLength the outputvalue would be an Integer
-                // the problem here is that the input type here needs to be the output type of the last field action ..?
-                //outputValue = conversionService.convertType(outputValue, inputType, outputType);
+                if (outputValue != null) {
+                    FieldType conversionInputType = conversionService.fieldTypeFromClass(outputValue.getClass());
+                    outputValue = conversionService.convertType(outputValue, conversionInputType, outputType);
+                } 
             } catch (AtlasConversionException e) {
                 logger.error(String.format("Unable to auto-convert for sT=%s tT=%s tF=%s msg=%s", inputType, outputType,
                         outputField.getPath(), e.getMessage()), e);
