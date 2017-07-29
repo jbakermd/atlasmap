@@ -48,6 +48,7 @@ public abstract class BaseAtlasModule implements AtlasModule {
     
     private AtlasConversionService atlasConversionService = null;
     private AtlasModuleMode atlasModuleMode = AtlasModuleMode.UNSET;
+    protected boolean automaticallyProcessOutputFieldActions = true;
 
     
     @Override
@@ -70,6 +71,9 @@ public abstract class BaseAtlasModule implements AtlasModule {
 
     @Override
     public void processOutputActions(AtlasSession atlasSession, BaseMapping baseMapping) throws AtlasException {
+        if (!automaticallyProcessOutputFieldActions) {
+            return;
+        }
         if (baseMapping.getMappingType().equals(MappingType.COLLECTION)) {
             return;
         }
@@ -357,7 +361,7 @@ public abstract class BaseAtlasModule implements AtlasModule {
         session.getAudits().getAudit().add(audit);
     }
     
-    protected void processFieldActions(AtlasFieldActionService fieldActionService, Field field) throws AtlasException {
+    public void processFieldActions(AtlasFieldActionService fieldActionService, Field field) throws AtlasException {
         field.setValue(fieldActionService.processActions(field.getActions(), field.getValue()));
     }
     

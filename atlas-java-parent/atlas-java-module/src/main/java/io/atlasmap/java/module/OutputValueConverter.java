@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import io.atlasmap.api.AtlasConversionException;
 import io.atlasmap.api.AtlasConversionService;
 import io.atlasmap.api.AtlasException;
+import io.atlasmap.api.AtlasFieldActionService;
 import io.atlasmap.api.AtlasSession;
 import io.atlasmap.core.PathUtil;
 import io.atlasmap.java.inspect.ClassHelper;
@@ -28,13 +29,15 @@ public class OutputValueConverter implements JavaFieldWriterValueConverter {
     private AtlasSession session = null;
     private AtlasConversionService conversionService = null;
     private Mapping mapping = null;
+    private JavaModule module = null;
 
-    public OutputValueConverter(Field inputField, AtlasSession session, Mapping mapping, AtlasConversionService conversionService) {
+    public OutputValueConverter(Field inputField, AtlasSession session, Mapping mapping, AtlasConversionService conversionService, JavaModule module) {
         super();
         this.inputField = inputField;
         this.session = session;
         this.mapping = mapping;
         this.conversionService = conversionService;
+        this.module = module;
     }
 
     @Override
@@ -92,19 +95,30 @@ public class OutputValueConverter implements JavaFieldWriterValueConverter {
             }
             return populateEnumValue((JavaEnumField) inputField, (JavaEnumField) outputField);
         }
-
+                
+        AtlasFieldActionService fieldActionService = session.getAtlasContext().getContextFactory().getFieldActionService();
         if (inputType != null && inputType.equals(outputType)) {
-            outputValue = inputValue;
+            outputValue = fieldActionService.processActions(outputField.getActions(), inputValue);
         } else {
             try {
-                outputValue = conversionService.convertType(inputValue, inputType, outputType);
+                //inputValue: "fname" (String)
+                //inputType: STRING
+                //outputType: INTEGER
+                //StringLength field action runs, changing "fname" (String) to "5" (Integer)
+                outputValue = fieldActionService.processActions(outputField.getActions(), inputValue);
+                //outputValue is now "5" (Integer)
+                //but conversion is about to fail because the input type here is STRING
+                // if last action was Lowercase the outputvalue would be a String
+                // if last action was StringLength the outputvalue would be an Integer
+                // the problem here is that the input type here needs to be the output type of the last field action ..?
+                outputValue = conversionService.convertType(outputValue, inputType, outputType);
             } catch (AtlasConversionException e) {
                 logger.error(String.format("Unable to auto-convert for sT=%s tT=%s tF=%s msg=%s", inputType, outputType,
                         outputField.getPath(), e.getMessage()), e);
                 return null;
             }
         }
-
+                
         return outputValue;
     }
 

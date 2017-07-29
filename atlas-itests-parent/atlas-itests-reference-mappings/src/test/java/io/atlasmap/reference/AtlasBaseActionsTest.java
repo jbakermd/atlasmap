@@ -56,7 +56,7 @@ public abstract class AtlasBaseActionsTest extends AtlasMappingBaseTest {
         List<ActionDetail> actions = DefaultAtlasContextFactory.getInstance().getFieldActionService().listActionDetails();
         for (ActionDetail d : actions) {
             System.out.println(d.getName());
-        }
+        }        
         
         this.runActionTest(new Uppercase(), "fname", "FNAME");
         this.runActionTest(new Lowercase(), "fnAme", "fname");
@@ -67,8 +67,7 @@ public abstract class AtlasBaseActionsTest extends AtlasMappingBaseTest {
         this.runActionTest(new Capitalize(), "fname", "Fname");
         this.runActionTest(new SeparateByDash(), "f:name", "f-name");
         this.runActionTest(new SeparateByUnderscore(), "f-na_me", "f_na_me");
-        this.runActionTest(new StringLength(), "fname", stringLengthTestResultIsInteger ? 5 : "5");
-        
+                        
         SubString s = new SubString();
         s.setStartIndex(0);
         s.setEndIndex(3);
@@ -157,6 +156,11 @@ public abstract class AtlasBaseActionsTest extends AtlasMappingBaseTest {
         
         return outputActual;
     }  
+    
+    @Test
+    public void runStringLengthTest() throws Exception {
+        this.runActionTest(new StringLength(), "fname", stringLengthTestResultIsInteger ? 5 : "5");
+    }
     
     public abstract Object createInput(String inputFirstName);
     
