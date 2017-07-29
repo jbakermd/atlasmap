@@ -99,6 +99,10 @@ public class OutputValueConverter implements JavaFieldWriterValueConverter {
         AtlasFieldActionService fieldActionService = session.getAtlasContext().getContextFactory().getFieldActionService();
         if (inputType != null && inputType.equals(outputType)) {
             outputValue = fieldActionService.processActions(outputField.getActions(), inputValue);
+            if (outputValue != null) {
+                FieldType conversionInputType = conversionService.fieldTypeFromClass(outputValue.getClass());
+                outputValue = conversionService.convertType(outputValue, conversionInputType, outputType);
+            } 
         } else {
             try {
                 outputValue = fieldActionService.processActions(outputField.getActions(), inputValue);
